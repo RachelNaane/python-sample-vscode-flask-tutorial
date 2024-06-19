@@ -1,4 +1,4 @@
-name: stages_$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
+name: approval_job_$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 
 trigger:
 - main
@@ -18,15 +18,13 @@ stages:
 - stage: ApprovalStage
   dependsOn: BuildStage
   jobs:
-  - job: ApprovalJob
+  - deployment: 'deploy_after_aprove'
+    environment:
+      name: qa
     displayName: 'Approval Job'
-    steps:
-    - script: echo "This job will run after manual approval."
-      displayName: 'Post-Approval Step'
-  condition: succeeded()
-  approval:
-    approvals:
-    - approverType: identity
-      approver:
-      - your-username-or-email  # Replace with the actual username or email of the approver
-    timeout: '60m'  # Set the timeout for the approval
+    strategy:
+     runOnce:
+      deploy:
+        steps:
+        - script: echo "This job will run after manual approval."
+          displayName: 'Post-Approval Step'
