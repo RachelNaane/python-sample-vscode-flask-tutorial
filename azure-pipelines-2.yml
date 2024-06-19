@@ -1,0 +1,32 @@
+name: stages_$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
+
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: BuildStage
+  jobs:
+  - job: BuildJob
+    displayName: 'Build Job'
+    steps:
+    - script: echo "Building the project..."
+      displayName: 'Build Step'
+
+- stage: ApprovalStage
+  dependsOn: BuildStage
+  jobs:
+  - job: ApprovalJob
+    displayName: 'Approval Job'
+    steps:
+    - script: echo "This job will run after manual approval."
+      displayName: 'Post-Approval Step'
+  condition: succeeded()
+  approval:
+    approvals:
+    - approverType: identity
+      approver:
+      - your-username-or-email  # Replace with the actual username or email of the approver
+    timeout: '60m'  # Set the timeout for the approval
