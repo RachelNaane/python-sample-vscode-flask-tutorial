@@ -5,15 +5,23 @@ pool:
   vmImage: 'ubuntu-latest'
 
 parameters:
-- name: userInput
-  displayName: 'Enter your input'
-  type: string
-  default: 'default value'
+- name: run
+  displayName: 'Run the conditional task'
+  type: boolean
+  default: false
 
 jobs:
-- job: DisplayInput
-  displayName: 'Display Input: ${{ parameters.userInput }}'
+- job: ConditionalJob
+  displayName: 'Conditional Job'
   steps:
-  - script: |
-      echo "User input is: ${{ parameters.userInput }}"
-    displayName: 'Echo user input'
+  - task: Bash@3
+    inputs:
+      targetType: 'inline'
+      script: echo "This task always runs."
+    displayName: 'Always Run Task'
+
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.x'
+    displayName: 'Use Python 3.x'
+    condition: eq('${{ parameters.run }}', true)
