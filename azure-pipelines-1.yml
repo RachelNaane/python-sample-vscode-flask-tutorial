@@ -1,0 +1,19 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+parameters:
+- name: userInput
+  displayName: 'Enter your input'
+  type: string
+  default: 'default value'
+
+jobs:
+- job: DisplayInput
+  displayName: 'Display Input: ${{ parameters.userInput }}'
+  steps:
+  - script: |
+      echo "User input is: ${{ parameters.userInput }}"
+    displayName: 'Echo user input'
